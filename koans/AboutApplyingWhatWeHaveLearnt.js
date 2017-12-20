@@ -57,6 +57,16 @@ describe("About Applying What We Have Learnt", function() {
     expect(sum).toBe(233168);
   });
 
+  it("should use chain() ... .value() to use multiple higher order functions", function() {
+    var result = _([ [0, 1], 2 ]).chain()
+                     .flatten()
+                     .map(function(x) { return x+1 } )
+                     .reduce(function(sum, x) { return sum + x })
+                     .value();
+
+    expect(result).toEqual(6);
+  });
+
   it("should add all the natural numbers below 1000 that are multiples of 3 or 5 (functional)", function () {
     var sum = _(_.range(0,1000)).chain()
               .map(function(x) {if (x % 3 == 0 || x % 5 == 0 ) {return x} else {return 0} })
@@ -70,7 +80,7 @@ describe("About Applying What We Have Learnt", function() {
    it("should count the ingredient occurrence (imperative)", function () {
     var ingredientCount = { "{ingredient name}": 0 };
 
-    for (i = 0; i < products.length; i+=1) {
+    for (var i = 0; i < products.length; i+=1) {
         for (j = 0; j < products[i].ingredients.length; j+=1) {
             ingredientCount[products[i].ingredients[j]] = (ingredientCount[products[i].ingredients[j]] || 0) + 1;
         }
@@ -83,15 +93,33 @@ describe("About Applying What We Have Learnt", function() {
     var ingredientCount = { "{ingredient name}": 0 };
 
     /* chain() together map(), flatten() and reduce() */
+    _(products).chain()
+                .map(function(x) {return x.ingredients;})
+                .flatten()
+                .reduce(function(sum, x) {return sum[x] = (sum[x] || 0) + 1, sum;}, ingredientCount)
+                .value();
 
-    expect(ingredientCount['mushrooms']).toBe(undefined);
+    expect(ingredientCount['mushrooms']).toBe(2);
   });
 
   /*********************************************************************************/
   /* UNCOMMENT FOR EXTRA CREDIT */
-  /*
-  it("should find the largest prime factor of a composite number", function () {
   
+  it("should find the largest prime factor of a composite number", function () {
+    function largestPrimeFactor(num) {
+      var factor = 2;
+      while (factor <= num) {
+        if (num % factor === 0) {
+          num = num / factor;
+        } else {
+          factor++;
+        }
+      }
+
+      return factor;
+    }
+
+    expect(largestPrimeFactor(15)).toBe(5);
   });
 
   it("should find the largest palindrome made from the product of two 3 digit numbers", function () {
@@ -110,5 +138,5 @@ describe("About Applying What We Have Learnt", function() {
   it("should find the 10001st prime", function () {
 
   });
-  */
+  
 });
